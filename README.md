@@ -2,8 +2,9 @@
 
 The repo for my dev work configurations. It has following deploy branches:  
 1. macos  
-2. linux  
-3. windows (wsl)  
+1. ipad  
+1. linux  
+1. windows (wsl)  
 
 # Usage
 
