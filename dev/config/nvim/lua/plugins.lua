@@ -9,7 +9,7 @@ return require('packer').startup(function(use)
 
     use({
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.1',
+        tag = '0.1.8',
         -- or                            , branch = '0.1.x',
         requires = { { 'nvim-lua/plenary.nvim' } }
     })
@@ -22,7 +22,7 @@ return require('packer').startup(function(use)
     use('theprimeagen/harpoon')
     use('mbbill/undotree')
     use('tpope/vim-fugitive')
-    use('jose-elias-alvarez/null-ls.nvim')
+    use('nvimtools/none-ls.nvim')
     use('numToStr/Comment.nvim')
     use('ludovicchabant/vim-gutentags')
 
@@ -42,7 +42,7 @@ return require('packer').startup(function(use)
     }
 
     -- bufferline
-    use { "akinsho/nvim-bufferline.lua", tag = "v2.7.0" }
+    use { "akinsho/nvim-bufferline.lua" }
 
     use {
         'VonHeikemen/lsp-zero.nvim',
