@@ -84,8 +84,8 @@ source $ZSH/oh-my-zsh.sh
 # User configuration
 setopt NO_BEEP
 
-bindkey '^K' history-substring-search-up
-bindkey '^H' history-substring-search-down
+bindkey '^]' history-substring-search-up
+# bindkey '^}' history-substring-search-down
 
 
 # export MANPATH="/usr/local/man:$MANPATH"
