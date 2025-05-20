@@ -6,6 +6,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # If you come from bash you might have to change your $PATH.
+export XDG_CONFIG_HOME=$HOME/.config
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
 # Path to your Oh My Zsh installation.
@@ -132,3 +133,12 @@ eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 
 export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
+
+
+# BEGIN opam configuration
+# This is useful if you're using opam as it adds:
+#   - the correct directories to the PATH
+#   - auto-completion for the opam binary
+# This section can be safely removed at any time if needed.
+[[ ! -r '/Users/hamishaider/.opam/opam-init/init.zsh' ]] || source '/Users/hamishaider/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
+# END opam configuration
