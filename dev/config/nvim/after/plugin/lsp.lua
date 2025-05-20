@@ -1,97 +1,133 @@
-local lsp = require("lsp-zero")
+-- Configure diagnostics and UI
+vim.opt.signcolumn = 'yes'  -- Reserve space for LSP icons
 
-lsp.preset("recommended")
+-- Add rounded borders to LSP float windows
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
+  vim.lsp.handlers.hover,
+  {border = 'rounded'}
+)
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
+  vim.lsp.handlers.signature_help,
+  {border = 'rounded'}
+)
 
-lsp.ensure_installed({
-    -- 'tsserver',
-    -- 'sumneko_lua',
-    'rust_analyzer',
-    'pyright',
-    'svls'
-})
+-- Initialize lsp-zero (v4.x style)
+-- Add cmp_nvim_lsp capabilities settings to lspconfig
+-- This should be executed before you configure any language server
+local lspconfig_defaults = require('lspconfig').util.default_config
+lspconfig_defaults.capabilities = vim.tbl_deep_extend(
+  'force',
+  lspconfig_defaults.capabilities,
+  require('cmp_nvim_lsp').default_capabilities()
+)
 
--- Setup ocaml
--- "ocaml.menhir", "ocaml.interface", "ocaml.ocamllex", "
-lsp.configure('ocamllsp', {
-    cmd = { "ocamllsp" },
-    filetypes = { "ocaml", "ocaml.menhir", "ocaml.ocamllex", "ocaml.interface", "reason", "dune" },
-    root_dir = require("lspconfig").util.root_pattern("*.opam", "easy.json", "package.json", ".git", "dune-project",
-        "dune-workspace",
-        ".ocamlformat")
-})
-
--- Fix Undefined global 'vim'
-lsp.configure('sumneko_lua', {
-    settings = {
-        Lua = {
-            diagnostics = {
-                globals = { 'vim' }
-            }
-        }
-    }
-})
-
-
+-- Configure nvim-cmp (preserving your settings)
 local cmp = require('cmp')
--- local cmp_select = {behavior = cmp.SelectBehavior.Select}
-local cmp_mappings = lsp.defaults.cmp_mappings({
-    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.abort(),
-    ['<CR>'] = cmp.mapping.confirm({ behaviour = cmp.ConfirmBehavior.Replace, select = false }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    ['<Tab>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-            cmp.select_next_item()
-        else
-            fallback()
-        end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-            cmp.select_prev_item()
-        else
-            fallback()
-        end
-    end, { 'i', 's' }),
+
+require('luasnip.loaders.from_vscode').lazy_load()
+
+vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
+
+local cmp_mappings = {
+  ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+  ['<C-f>'] = cmp.mapping.scroll_docs(4),
+  ['<C-Space>'] = cmp.mapping.complete(),
+  ['<C-e>'] = cmp.mapping.abort(),
+  ['<CR>'] = cmp.mapping.confirm({ 
+    behavior = cmp.ConfirmBehavior.Replace,
+    select = false,
+  }),
+  ['<Tab>'] = cmp.mapping(function(fallback)
+    if cmp.visible() then
+      cmp.select_next_item()
+    else
+      fallback()
+    end
+  end, { 'i', 's' }),
+  ['<S-Tab>'] = cmp.mapping(function(fallback)
+    if cmp.visible() then
+      cmp.select_prev_item()
+    else
+      fallback()
+    end
+  end, { 'i', 's' }),
+}
+
+
+-- This is where you enable features that only work
+-- if there is a language server active in the file
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(event)
+    local opts = {buffer = event.buf}
+
+      vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+      vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+      vim.keymap.set('n', '<leader>vws', vim.lsp.buf.workspace_symbol, opts)
+      vim.keymap.set('n', '<leader>vd', vim.diagnostic.open_float, opts)
+      vim.keymap.set('n', '[d', vim.diagnostic.goto_next, opts)
+      vim.keymap.set('n', ']d', vim.diagnostic.goto_prev, opts)
+      vim.keymap.set('n', '<leader>vca', vim.lsp.buf.code_action, opts)
+      vim.keymap.set('n', '<leader>vrr', vim.lsp.buf.references, opts)
+      vim.keymap.set('n', '<leader>vrn', vim.lsp.buf.rename, opts)
+      vim.keymap.set('i', '<C-h>', vim.lsp.buf.signature_help, opts)
+    end,
 })
 
+-- Setup Mason (required for v4.x)
+require('mason').setup()
+require('mason-lspconfig').setup({
+  ensure_installed = {
+      'lua_ls', 
+      'ocamllsp', 
+      'pyright', 
+      'rust_analyzer',
+  },
+  handlers = {
+    -- this first function is the "default handler"
+    -- it applies to every language server without a "custom handler"
+    function(server_name)
+      require('lspconfig')[server_name].setup({})
+    end,
 
-lsp.setup_nvim_cmp({
-    preselect = 'none',
-    completion = {
-        completeopt = 'menu,menuone,noinsert,noselect'
-    },
-    mapping = cmp_mappings
+    -- custom
+    lua_ls = function()
+        require("lspconfig").lua_ls.setup({
+          settings = {
+            Lua = {
+              runtime = { version = 'LuaJIT' },
+              diagnostics = { globals = { 'vim' } },
+              workspace = { checkThirdParty = false },
+              telemetry = { enable = false }
+            }
+          }
+        })
+    end,
+
+    ocamllsp = function()
+        require("lspconfig").ocamllsp.setup({
+          cmd = { 'ocamllsp' },
+          filetypes = { 'ocaml', 'ocaml.menhir', 'ocaml.ocamllex', 'ocaml.interface', 'reason', 'dune' },
+          root_dir = require('lspconfig.util').root_pattern(
+            '*.opam', 'easy.json', 'package.json', '.git', 'dune-project', 'dune-workspace', '.ocamlformat'
+          ),        
+        })
+    end,
+  },
 })
 
-lsp.set_preferences({
-    suggest_lsp_servers = false,
-    sign_icons = {
-        error = 'E',
-        warn = 'W',
-        hint = 'H',
-        info = 'I'
-    }
-})
-
-lsp.on_attach(function(client, bufnr)
-    local opts = { buffer = bufnr, remap = false }
-
-    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-    vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
-    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
-    vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
-    vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
-    vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
-    vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
-end)
-
-lsp.setup()
-
+-- Diagnostic configuration (preserved from your setup)
 vim.diagnostic.config({
-    virtual_text = true
+  virtual_text = true,
+  signs = true,
+  update_in_insert = false,
+  underline = true,
+  severity_sort = true,
+  float = {
+    focusable = false,
+    style = 'minimal',
+    border = 'rounded',
+    source = 'always',
+    header = '',
+    prefix = '',
+  },
 })

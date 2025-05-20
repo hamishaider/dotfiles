@@ -1,5 +1,0 @@
-font = "MesloLGS Nerd Font"
-font-size = 13.0
-theme = "catppuccin-mocha"
-option-as-alt = "both"
-shell = "/bin/zsh"

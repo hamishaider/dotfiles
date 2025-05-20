@@ -1,15 +1,15 @@
-local nulls = require("null-ls")
+local null_ls = require("null-ls")
 
-
-nulls.setup({
+null_ls.setup({
     sources = {
-        nulls.builtins.formatting.black,
-        nulls.builtins.formatting.verible_verilog_format,
-        nulls.builtins.formatting.ocamlformat,
-        -- nulls.builtins.diagnostics.vint,
-        nulls.builtins.formatting.codespell,
-        nulls.builtins.formatting.isort,
-        -- nulls.builtins.formatting.shellharden,
-        nulls.builtins.formatting.prettierd,
+        null_ls.builtins.formatting.black,
+        null_ls.builtins.formatting.verible_verilog_format,
+        null_ls.builtins.formatting.ocamlformat,
+        -- null_ls.builtins.diagnostics.vint,
+        null_ls.builtins.formatting.codespell,
+        null_ls.builtins.formatting.isort,
+        -- null_ls.builtins.formatting.shellharden,
+        null_ls.builtins.formatting.prettierd,
+        -- slang_diagnostics,
     },
 })

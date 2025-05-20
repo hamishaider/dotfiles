@@ -1,81 +1,94 @@
--- This file can be loaded by calling `lua require('plugins')` from your init.vim
+return {
+  -- Telescope (file finder)
+  {
+    'nvim-telescope/telescope.nvim',
+    tag = '0.1.8',
+    dependencies = { 'nvim-lua/plenary.nvim' }
+  },
 
--- Only required if you have packer configured as `opt`
-vim.cmd [[packadd packer.nvim]]
+  -- Treesitter (syntax highlighting)
+  {
+    'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
+  },
 
-return require('packer').startup(function(use)
-    -- Packer can manage itself
-    use('wbthomason/packer.nvim')
+  -- Color schemes
+  { 'catppuccin/nvim', name = 'catppuccin' },
+  { 'rose-pine/neovim', name = 'rose-pine' },
 
-    use({
-        'nvim-telescope/telescope.nvim',
-        tag = '0.1.8',
-        -- or                            , branch = '0.1.x',
-        requires = { { 'nvim-lua/plenary.nvim' } }
-    })
+  -- Treesitter playground
+  'nvim-treesitter/playground',
 
-    use({ 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' })
+  -- Harpoon (quick navigation)
+  'theprimeagen/harpoon',
 
-    use({ "catppuccin/nvim", as = "catppuccin" })
-    use({ 'rose-pine/neovim', as = 'rose-pine' })
-    use('nvim-treesitter/playground')
-    use('theprimeagen/harpoon')
-    use('mbbill/undotree')
-    use('tpope/vim-fugitive')
-    use('nvimtools/none-ls.nvim')
-    use('numToStr/Comment.nvim')
-    use('ludovicchabant/vim-gutentags')
+  -- Undotree
+  'mbbill/undotree',
 
-    -- nvim-tree file explorer
-    -- use {
-    --     "kyazdani42/nvim-tree.lua",
-    --     requires = { "kyazdani42/nvim-web-devicons" }
-    -- }
+  -- Git integration
+  'tpope/vim-fugitive',
 
-    -- indentation guides
-    use "lukas-reineke/indent-blankline.nvim"
+  -- None-ls (null-ls replacement)
+  'nvimtools/none-ls.nvim',
 
-    -- statusbar
-    use {
-        "nvim-lualine/lualine.nvim",
-        requires = { "kyazdani42/nvim-web-devicons", opt = true }
+  -- Commenting
+  {
+    'numToStr/Comment.nvim',
+    config = function()
+      require('Comment').setup()
+    end
+  },
+
+  -- Tags generation
+  'ludovicchabant/vim-gutentags',
+
+  -- Indentation guides
+  'lukas-reineke/indent-blankline.nvim',
+
+  -- Status line
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'kyazdani42/nvim-web-devicons' }
+  },
+
+  -- Buffer line
+  'akinsho/nvim-bufferline.lua',
+
+  -- LSP Zero (LSP setup)
+  {
+    'VonHeikemen/lsp-zero.nvim',
+    branch = 'v4.x',
+    dependencies = {
+      -- LSP Support
+      { 'neovim/nvim-lspconfig' },
+      { 'williamboman/mason.nvim' },
+      { 'williamboman/mason-lspconfig.nvim' },
+
+      -- Autocompletion
+      { 'hrsh7th/nvim-cmp' },
+      { 'hrsh7th/cmp-nvim-lsp' },
+      { 'hrsh7th/cmp-buffer' },
+      { 'hrsh7th/cmp-path' },
+      { 'saadparwaiz1/cmp_luasnip' },
+      { 'hrsh7th/cmp-nvim-lua' },
+
+      -- Snippets
+      { 'L3MON4D3/LuaSnip' },
+      { 'rafamadriz/friendly-snippets' },
     }
+  },
 
-    -- bufferline
-    use { "akinsho/nvim-bufferline.lua" }
+  -- Rainbow delimiters
+  'HiPhish/rainbow-delimiters.nvim',
 
-    use {
-        'VonHeikemen/lsp-zero.nvim',
-        branch = 'v1.x',
-        requires = {
-            -- LSP Support
-            { 'neovim/nvim-lspconfig' }, -- Required
-            { 'williamboman/mason.nvim' }, -- Optional
-            { 'williamboman/mason-lspconfig.nvim' }, -- Optional
+  -- Linting
+  'mfussenegger/nvim-lint',
 
-            -- Autocompletion
-            { 'hrsh7th/nvim-cmp' }, -- Required
-            { 'hrsh7th/cmp-nvim-lsp' }, -- Required
-            { 'hrsh7th/cmp-buffer' }, -- Optional
-            { 'hrsh7th/cmp-path' }, -- Optional
-            { 'saadparwaiz1/cmp_luasnip' }, -- Optional
-            { 'hrsh7th/cmp-nvim-lua' }, -- Optional
-
-            -- Snippets
-            { 'L3MON4D3/LuaSnip' }, -- Required
-            { 'rafamadriz/friendly-snippets' }, -- Optional
-        }
-    }
-
-    use {
-        "HiPhish/rainbow-delimiters.nvim"
-    }
-
-    -- nvim-tree
-    use {
-        'nvim-tree/nvim-tree.lua',
-        requires = {
-            'nvim-tree/nvim-web-devicons', -- optional
-        },
-    }
-end)
+  -- File tree
+  {
+    'nvim-tree/nvim-tree.lua',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+  },
+}
