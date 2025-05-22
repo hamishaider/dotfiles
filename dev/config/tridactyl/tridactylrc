@@ -1,0 +1,3 @@
+set newtab about:blank
+set hintfilter vimperator-reflow
+bind ;h hint
