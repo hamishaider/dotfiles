@@ -1,0 +1,127 @@
+#!/bin/bash
+
+VPN_INTERFACE="tun0"
+VPN_HOST="vpn.usask.ca"
+STATUS_FILE="/tmp/waybar_vpn_status"
+PENDING_TIME_FILE="/tmp/waybar_vpn_pending_since"
+PENDING_TIMEOUT=300
+
+check_status() {
+    # Default values
+    alt="off"
+    class="disconnected"
+    text="Disconnected"
+
+    # Load status from file if it exists
+    [ -f "$STATUS_FILE" ] && status=$(<"$STATUS_FILE")
+
+
+    # Check if VPN interface is up
+    vpn_up=$(ip a | grep -q "$VPN_INTERFACE" && echo true || echo false)
+
+    case "$status" in
+        connected)
+            if $vpn_up; then
+                alt="on"
+                class="connected"
+                text="Connected"
+            else
+                echo "disconnected" > "$STATUS_FILE"
+            fi
+            ;;
+        connecting)
+            now=$(date +%s)
+            [ -f "$PENDING_TIME_FILE" ] && started=$(<"$PENDING_TIME_FILE") || started=$now
+            elapsed=$((now - started))
+
+            if $vpn_up; then
+                echo "connected" > "$STATUS_FILE"
+                alt="on"
+                class="connected"
+                text="Connected"
+                rm -f "$PENDING_TIME_FILE"
+            elif [ "$elapsed" -gt $PENDING_TIMEOUT ]; then  # Timeout after 20 seconds
+                echo "disconnected" > "$STATUS_FILE"
+                alt="off"
+                class="disconnected"
+                text="Failed"
+                rm -f "$PENDING_TIME_FILE"
+            else
+                alt="pending"
+                class="pending"
+                text="Connecting"
+            fi
+            ;;
+        disconnecting)
+            now=$(date +%s)
+            [ -f "$PENDING_TIME_FILE" ] && started=$(<"$PENDING_TIME_FILE") || started=$now
+            elapsed=$((now - started))
+
+            if ! $vpn_up; then
+                echo "disconnected" > "$STATUS_FILE"
+                alt="off"
+                class="disconnected"
+                text="Failed"
+                rm -f "$PENDING_TIME_FILE"
+            elif [ "$elapsed" -gt $PENDING_TIMEOUT ]; then  # Timeout after 20 seconds
+                echo "connected" > "$STATUS_FILE"
+                alt="on"
+                class="connected"
+                text="Connected"
+                rm -f "$PENDING_TIME_FILE"
+            else
+                alt="pending"
+                class="pending"
+                text="Disconnecting"
+            fi
+            ;;
+        *)
+            if $vpn_up; then
+                echo "connected" > "$STATUS_FILE"
+                alt="on"
+                class="connected"
+                text="Connected"
+            fi
+            ;;
+    esac
+
+    jq -cn --arg text "  $text" \
+          --arg alt "$alt" \
+          --arg class "$class" \
+          '{text: $text, alt: $alt, class: $class}'
+}
+
+prompt_and_connect() {
+    {
+        /home/hamis/bin/vpn_connect.expect "$VPN_HOST" &
+    }
+}
+
+case "$1" in
+    click)
+        if ip a | grep -q "$VPN_INTERFACE"; then
+            {
+                echo "disconnecting" > "$STATUS_FILE"
+                date +%s > "$PENDING_TIME_FILE"
+                sudo -S pkill openconnect <<< "$(pass local/sudo-password)" > /dev/null 2>&1
+            } || echo "Failed block" >> /tmp/vpn_debug.log
+        elif [[ -f "$STATUS_FILE" && $(<"$STATUS_FILE") =~ connecting|disconnecting ]]; then       
+            {
+                echo "disconnecting" > "$STATUS_FILE"
+                date +%s > "$PENDING_TIME_FILE"
+                sudo -S pkill openconnect <<< "$(pass local/sudo-password)" > /dev/null 2>&1
+            } || echo "Failed block" >> /tmp/vpn_debug.log
+        else
+            {
+                echo "connecting" > "$STATUS_FILE"
+                date +%s > "$PENDING_TIME_FILE"
+                prompt_and_connect > /dev/null 2>&1
+            } || echo "Failed block" >> /tmp/vpn_debug.log
+        fi
+        exit 0
+        ;;
+    *)
+        check_status
+        ;;
+esac
+

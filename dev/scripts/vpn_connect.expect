@@ -1,0 +1,75 @@
+#!/usr/bin/expect -f
+set timeout -1
+
+# Always log to this file regardless of shell redirection
+log_file -a /tmp/vpn_connect.expect.log
+
+set lockfile "/tmp/bw_sesson.lock"
+set timeout_secs 30
+set waited 0
+
+set vpn_host [lindex $argv 0]
+
+# === Wait if lockfile exists ===
+while {[file exists $lockfile]} {
+    if {$waited >= $timeout_secs} {
+        puts "Timeout: Lockfile still exists after $timeout_secs seconds"
+        exit 1
+    }
+    puts "Waiting for lockfile..."
+    sleep 1
+    incr waited
+}
+
+# === Create the lockfile ===
+set fh [open $lockfile w]
+puts $fh "expect-$$"
+close $fh
+
+set bw_status [exec bw status]
+
+if {[string match "*unauthenticated*" $bw_status]} {
+    set env(BW_CLIENTID)     [exec pass bitwarden/api-key]
+    set env(BW_CLIENTSECRET) [exec pass bitwarden/client-secret]
+    exec bw login --apikey > /dev/null 2>@1
+}
+
+# Export Bitwarden secrets as environment variables directly
+set env(BW_PASSWORD)     [exec pass bitwarden/master-password]
+set bw_itemid            [exec pass bitwarden/usask-entry-id]
+
+# Bitwarden login and unlock
+set env(BW_SESSION) [exec bw unlock --passwordenv BW_PASSWORD --raw]
+
+# Extract username
+set username [exec bw get username $bw_itemid]
+
+# Start openconnect
+spawn sudo openconnect \
+    --protocol=anyconnect \
+    --user=$username \
+    --no-dtls \
+    --background \
+    $vpn_host
+
+# Respond to prompts
+expect {
+    -re {\nPassword:} {
+        send "[exec bw get password $bw_itemid]\n"
+        exp_continue
+    }
+    -re {.*[Mm]icrosoft verification code.*} {
+        send "[exec bw get totp $bw_itemid]\r"
+    }
+}
+
+
+# Allow OTP to be processed, then exit expect
+sleep 10
+
+exec bw lock
+# === Delete the lockfile when done ===
+file delete -force $lockfile
+
+
+exit 0
