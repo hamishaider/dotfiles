@@ -12,7 +12,15 @@ null_ls.setup({
         null_ls.builtins.formatting.codespell,
         null_ls.builtins.formatting.isort,
         -- null_ls.builtins.formatting.shellharden,
-        null_ls.builtins.formatting.prettierd,
+        null_ls.builtins.formatting.prettierd.with({
+            disabled_filetypes = { "jsonc" },
+        }),
+        null_ls.builtins.formatting.prettier.with({
+            filetypes = { "jsonc" },
+            extra_args = {
+                "--trailing-comma", "none",
+            },
+        }),
         -- slang_diagnostics,
     },
 })
