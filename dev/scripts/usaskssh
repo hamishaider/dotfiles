@@ -1,0 +1,80 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+
+set owner_id [exec uuidgen]
+
+puts "Using owner_id: $owner_id"
+
+# Define hosts and users
+set hosts {
+    {"CMC" "ece-ko6"}
+    {"P6000" "ko-lab"}
+}
+
+# Check if CLI argument was given
+if {[llength $argv] == 1} {
+    set choice [lindex $argv 0]
+} else {
+    # Prompt user to choose host
+    puts "Select a host:"
+    set i 0
+    foreach host $hosts {
+        puts "$i) [lindex $host 0]"
+        incr i
+    }
+    puts -nonewline "Enter number: "
+    flush stdout
+    gets stdin choice
+}
+
+# Validate input
+if {![string is integer -strict $choice] || $choice < 0 || $choice >= [llength $hosts]} {
+    puts "Invalid selection."
+    exit 1
+}
+
+# Get selected user and host
+set selected [lindex $hosts $choice]
+set remote_host [lindex $selected 1]
+
+# Try to get bw session
+set sess [catch {exec /home/hamis/bin/bwsm acquire $owner_id} result]
+
+# Check for failure
+if {$sess != 0} {
+    puts "Failed to acquire Bitwarden session: $result"
+    exit 1
+}
+
+# Save session to environment variable for use by spawned processes
+set env(BW_SESSION) $result
+
+set bw_itemid            [exec pass bitwarden/usask-entry-id]
+# Extract username
+set username [exec bw get username $bw_itemid]
+# Get password from Bitwarden (requires unlocked session)
+set password [exec bw get password $bw_itemid]
+
+# Start SSH session
+spawn env TERM=xterm-256color ssh $username@$remote_host.usask.ca
+
+expect {
+    -re {Are you sure you want to continue connecting \(yes/no.*\)?} {
+        send "yes\r"
+        exp_continue
+    }
+    -re {(?i)password:} {
+        send "$password\r"
+    }
+}
+
+# ---- Cleanup session when done ----
+set release_result [catch {exec /home/hamis/bin/bwsm release $owner_id} r2]
+if {$release_result != 0} {
+    puts "Warning: Failed to release Bitwarden session: $r2"
+}
+
+# Hand control to the user
+interact
+
