@@ -1,0 +1,75 @@
+#!/bin/bash
+
+LOCKFILE="/tmp/bw_session.lock"
+TIMEOUT=30  # seconds
+OWNER_ID="$2"
+
+
+acquire_session() {
+    local start_time=$(date +%s)
+
+    while [[ -f "$LOCKFILE" ]]; do
+        local held_pid
+        held_pid=$(<"$LOCKFILE")
+        local elapsed=$(( $(date +%s) - start_time ))
+        if (( elapsed >= TIMEOUT )); then
+            echo "Timeout waiting for Bitwarden session lock (held by PID $held_pid)." >&2
+            exit 1
+        fi
+        sleep 0.5
+    done
+
+    echo "$OWNER_ID" > "$LOCKFILE"
+    if [[ "$bw_status" == *unauthenticated* ]]; then
+        echo "Bitwarden not logged in. Logging in with API key..."
+        export BW_CLIENTID=$(pass bitwarden/api-key)
+        export BW_CLIENTSECRET=$(pass bitwarden/client-secret)
+        bw login --apikey || {
+            rm -f "$LOCKFILE"
+            echo "Login failed." >&2
+            exit 1
+        }
+    fi
+
+    export BW_PASS=$(pass bitwarden/master-password)
+
+    # Always unlock a new session
+    export BW_SESSION=$(bw unlock --passwordenv BW_PASS --raw)
+
+    echo "$BW_SESSION"
+}
+
+release_session() {
+    if [[ ! -f "$LOCKFILE" ]]; then
+        echo "No lockfile found." >&2
+        exit 1
+    fi
+
+    local file_owner_id
+    file_owner_id=$(<"$LOCKFILE")
+
+    if [[ "$file_owner_id" != "$OWNER_ID" ]]; then
+        echo "OWNER_ID mismatch. $file_owner_id doesn't match $OWNER_ID." >&2
+        exit 1
+    fi
+
+    # Best effort lock
+    bw lock &>/dev/null
+    rm -f "$LOCKFILE"
+    echo "Bitwarden session released."
+}
+
+# === MAIN ===
+case "$1" in
+    acquire|"")
+        acquire_session
+        ;;
+    release)
+        release_session
+        ;;
+    *)
+        echo "Usage: get_bw_status [acquire|release]" >&2
+        exit 1
+        ;;
+esac
+
