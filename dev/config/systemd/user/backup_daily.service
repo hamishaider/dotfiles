@@ -1,0 +1,7 @@
+[Unit]
+Description=Daily OS Backup
+
+[Service]
+Type=oneshot
+ExecStart=%h/.backup_daily.sh
+

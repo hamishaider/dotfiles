@@ -1,0 +1,7 @@
+[Unit]
+Description=Weekly OS Backup
+
+[Service]
+Type=oneshot
+ExecStart=%h/.backup_weekly.sh
+

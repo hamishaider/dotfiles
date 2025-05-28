@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Weekly OS Backup
+
+[Timer]
+OnCalendar=Mon
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+
