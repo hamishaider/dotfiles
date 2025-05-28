@@ -1,0 +1,16 @@
+local lint = require('lint')
+
+-- Set up filetype associations
+lint.linters_by_ft = {
+    verilog = { 'slang' },
+    systemverilog = { 'slang' },
+}
+
+-- Create autocmd to lint on buffer changes
+vim.api.nvim_create_autocmd({ 'BufWritePost' }, {
+    callback = function()
+        lint.try_lint()
+    end,
+    group = vim.api.nvim_create_augroup('nvim-lint-slang', { clear = true }),
+    pattern = { '*.sv', '*.svh', '*.v', '*.vh' },
+})
