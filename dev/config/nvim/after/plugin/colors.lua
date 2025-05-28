@@ -1,7 +1,7 @@
 require("catppuccin").setup {
     flavour = "mocha", -- latte, frappe, macchiato, mocha
     term_colors = true,
-    transparent_background = false,
+    transparent_background = true,
     no_italic = true,
     no_bold = false,
     styles = {
@@ -40,6 +40,7 @@ require("catppuccin").setup {
             show_root = false,        -- makes the root folder not transparent
             transparent_panel = true, -- make the panel transparent
         },
+        harpoon = true,
     },
 }
 

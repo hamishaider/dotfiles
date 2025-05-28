@@ -1,0 +1,55 @@
+configuration {
+  font: "JetBrainsMono Nerd Font 12";
+  show-icons: true;
+  icon-theme: "Papirus";
+  modi: "drun,run,window";
+  display-drun: " Apps";
+  display-run: " Run";
+  display-window: " Windows";
+  drun-display-format: "{name}";
+  alternating-row-colors: false;
+}
+
+* {
+  background: rgba(49, 50, 68, 1);   /* #313244 - very dark purple/grey */
+  foreground: #CDD6F4;  /* Text color (Catppuccin mocha text) */
+  border: 0px;
+  border-radius: 10px;
+  padding: 8px;
+  spacing: 6px;
+
+  selected-normal-background: rgba(166, 173, 255, 1);  /* Lavender-ish selection */
+  selected-normal-foreground: #1E1E2E;  /* Text over selection */
+}
+
+element {
+  background-color: inherit;
+  text-color: inherit;
+}
+
+element.normal {
+  background-color: rgba(69, 71, 90, 1);   /* #45475A - dark purple/grey */
+  text-color: #CDD6F4;                        /* Text color (Catppuccin text) */
+}
+
+element.alternate.normal {
+  background-color: rgba(69, 71, 90, 1);   /* same as normal */
+  text-color: #CDD6F4;
+}
+
+element.selected {
+  background-color: rgba(166, 173, 255, 1); /* Lavender highlight */
+  text-color: #1E1E2E;                        /* Dark text for contrast */
+}
+
+element.active {
+  background-color: rgba(203, 166, 247, 1); /* Mauve */
+  text-color: #1E1E2E;
+}
+
+element.urgent {
+  background-color: rgba(243, 139, 168, 1); /* Red for urgent */
+  text-color: #1E1E2E;
+}
+
+

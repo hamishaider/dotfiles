@@ -1,0 +1,19 @@
+/* Transparent main background */
+body {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Transparent editor and panes */
+.workspace-split,
+.workspace-tab-container,
+.workspace-leaf-content {
+  background-color: rgba(30, 30, 30, 0.3) !important;
+  backdrop-filter: blur(6px);
+}
+
+/* Keep text solid and crisp */
+.markdown-preview-view,
+.markdown-source-view {
+  color: rgba(255, 255, 255, 1.0) !important;
+}
+
