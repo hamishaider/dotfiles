@@ -7,10 +7,14 @@ null_ls.setup({
             command = nvim_venv_path .. "/bin/black",
         }),
         null_ls.builtins.formatting.verible_verilog_format,
-        null_ls.builtins.formatting.ocamlformat,
+        -- null_ls.builtins.formatting.ocamlformat,
         -- null_ls.builtins.diagnostics.vint,
-        null_ls.builtins.formatting.codespell,
-        null_ls.builtins.formatting.isort,
+        null_ls.builtins.formatting.codespell({
+            command = nvim_venv_path .. "/bin/codespell",
+        }),
+        null_ls.builtins.formatting.isort({
+            command = nvim_venv_path .. "/bin/isort",
+        }),
         -- null_ls.builtins.formatting.shellharden,
         null_ls.builtins.formatting.prettierd.with({
             disabled_filetypes = { "jsonc" },

@@ -78,9 +78,9 @@ require('mason').setup()
 require('mason-lspconfig').setup({
     ensure_installed = {
         'lua_ls',
-        'ocamllsp',
+        -- 'ocamllsp',
         'pyright',
-        'rust_analyzer',
+        -- 'rust_analyzer',
     },
     handlers = {
         -- this first function is the "default handler"
@@ -103,14 +103,14 @@ require('mason-lspconfig').setup({
             })
         end,
 
-        ocamllsp = function()
-            require("lspconfig").ocamllsp.setup({
-                cmd = { 'ocamllsp' },
-                filetypes = { 'ocaml', 'ocaml.menhir', 'ocaml.ocamllex', 'ocaml.interface', 'reason', 'dune' },
-                root_dir = require('lspconfig.util').root_pattern(
-                    '*.opam', 'easy.json', 'package.json', '.git', 'dune-project', 'dune-workspace', '.ocamlformat'
-                ),
-            })
-        end,
+        -- ocamllsp = function()
+        --     require("lspconfig").ocamllsp.setup({
+        --         cmd = { 'ocamllsp' },
+        --         filetypes = { 'ocaml', 'ocaml.menhir', 'ocaml.ocamllex', 'ocaml.interface', 'reason', 'dune' },
+        --         root_dir = require('lspconfig.util').root_pattern(
+        --             '*.opam', 'easy.json', 'package.json', '.git', 'dune-project', 'dune-workspace', '.ocamlformat'
+        --         ),
+        --     })
+        -- end,
     },
 })
