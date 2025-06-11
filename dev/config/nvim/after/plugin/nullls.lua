@@ -9,10 +9,10 @@ null_ls.setup({
         null_ls.builtins.formatting.verible_verilog_format,
         -- null_ls.builtins.formatting.ocamlformat,
         -- null_ls.builtins.diagnostics.vint,
-        null_ls.builtins.formatting.codespell({
+        null_ls.builtins.formatting.codespell.with({
             command = nvim_venv_path .. "/bin/codespell",
         }),
-        null_ls.builtins.formatting.isort({
+        null_ls.builtins.formatting.isort.with({
             command = nvim_venv_path .. "/bin/isort",
         }),
         -- null_ls.builtins.formatting.shellharden,
