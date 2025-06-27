@@ -73,6 +73,23 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
+vim.lsp.config('verible', {
+    cmd = { "verible-verilog-ls", "--rules_config_search" },
+    filetypes = { 'verilog', 'systemverilog' }
+})
+
+vim.lsp.config('pyright', {})
+vim.lsp.config('lua_ls', {
+    settings = {
+        diagnostics = {
+            globals = { "vim" }, -- recognize `vim` as a defined global
+        },
+        runtime = {
+            version = "LuaJIT", -- use Neovim’s Lua runtime
+        },
+    }
+})
+
 -- Setup Mason (required for v4.x)
 require('mason').setup()
 require('mason-lspconfig').setup({
@@ -81,27 +98,39 @@ require('mason-lspconfig').setup({
         -- 'ocamllsp',
         'pyright',
         -- 'rust_analyzer',
+        'verible'
     },
     handlers = {
         -- this first function is the "default handler"
         -- it applies to every language server without a "custom handler"
-        function(server_name)
-            require('lspconfig')[server_name].setup({})
-        end,
+        -- function(server_name)
+        --     require('lspconfig')[server_name].setup({})
+        -- end,
 
         -- custom
-        lua_ls = function()
-            require("lspconfig").lua_ls.setup({
-                settings = {
-                    Lua = {
-                        runtime = { version = 'LuaJIT' },
-                        diagnostics = { globals = { 'vim' } },
-                        workspace = { checkThirdParty = false },
-                        telemetry = { enable = false }
-                    }
-                }
-            })
-        end,
+        -- lua_ls = function()
+        --     require("lspconfig").lua_ls.setup({
+        --         settings = {
+        --             Lua = {
+        --                 runtime = { version = 'LuaJIT' },
+        --                 diagnostics = { globals = { 'vim' } },
+        --                 workspace = { checkThirdParty = false },
+        --                 telemetry = { enable = false }
+        --             }
+        --         }
+        --     })
+        -- end,
+
+        -- verible = function()
+        --     require('lspconfig').config('verible', {
+        --         cmd = {
+        --             "verible-verilog-ls",
+        --             "--rules_config_search"
+        --         },
+        --         filetypes = { "verilog", "systemverilog" },
+        --     })
+        -- end,
+
 
         -- ocamllsp = function()
         --     require("lspconfig").ocamllsp.setup({
