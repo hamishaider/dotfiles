@@ -78,9 +78,9 @@ require('mason').setup()
 require('mason-lspconfig').setup({
     ensure_installed = {
         'lua_ls',
-        'ocamllsp',
+        -- 'ocamllsp',
         'pyright',
-        'rust_analyzer',
+        -- 'rust_analyzer',
     },
     handlers = {
         -- this first function is the "default handler"
@@ -112,5 +112,7 @@ require('mason-lspconfig').setup({
                 ),
             })
         end,
+
+
     },
 })

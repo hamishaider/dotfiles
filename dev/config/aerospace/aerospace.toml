@@ -127,14 +127,15 @@ automatically-unhide-macos-hidden-apps = false
     alt-7 = 'workspace 7'
     alt-8 = 'workspace 8'
     alt-9 = 'workspace 9'
-    alt-a = 'workspace A' # In your config, you can drop workspace bindings that you don't need
-    alt-b = 'workspace B'
-    alt-c = 'workspace C'
-    alt-i = 'workspace I'
-    alt-m = 'workspace M'
-    alt-n = 'workspace N'
-    alt-p = 'workspace P'
-    alt-v = 'workspace V'
+    alt-a = 'workspace A' # Chats 
+    alt-b = 'workspace B' # Browser
+    alt-c = 'workspace C' # Calender & Reminders 
+    alt-i = 'workspace I' # Research? (Insight xD)
+    alt-n = 'workspace N' # Notes (Obsidian)
+    alt-m = 'workspace M' # Mail
+    alt-p = 'workspace P' # Passwords (Bitwardwen)
+    alt-r = 'workspace R' # Passwords (Bitwardwen)
+    alt-v = 'workspace V' # Vusic (Spotify)
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
     alt-shift-1 = 'move-node-to-workspace 1'
@@ -150,9 +151,10 @@ automatically-unhide-macos-hidden-apps = false
     alt-shift-b = 'move-node-to-workspace B'
     alt-shift-c = 'move-node-to-workspace C'
     alt-shift-i = 'move-node-to-workspace I'
-    alt-shift-m = 'move-node-to-workspace M'
     alt-shift-n = 'move-node-to-workspace N'
+    alt-shift-m = 'move-node-to-workspace M'
     alt-shift-p = 'move-node-to-workspace P'
+    alt-shift-r = 'move-node-to-workspace R'
     alt-shift-v = 'move-node-to-workspace V'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
@@ -191,9 +193,9 @@ run = "move-node-to-workspace N"
 if.app-id = "com.apple.mail"
 run = "move-node-to-workspace M"
 
-[[on-window-detected]]
-if.app-id = "org.mozilla.firefox"
-run = "move-node-to-workspace B"
+# [[on-window-detected]]
+# if.app-id = "org.mozilla.firefox"
+# run = "move-node-to-workspace B"
 
 [[on-window-detected]]
 if.app-id = "com.whatsapp"
@@ -214,3 +216,7 @@ run = "move-node-to-workspace C"
 [[on-window-detected]]
 if.app-id = "com.bitwarden.desktop"
 run = "move-node-to-workspace P"
+
+[[on-window-detected]]
+if.app-id = "com.apple.Notes"
+run = "move-node-to-workspace 8"
