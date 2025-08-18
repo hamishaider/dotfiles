@@ -6,6 +6,7 @@ set timeout -1
 set hosts {
     {"CMC" "ece-ko6"}
     {"P6000" "ko-lab"}
+    {"A40" "ko-lab2"}
 }
 
 # Check if CLI argument was given
