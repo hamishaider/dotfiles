@@ -1,0 +1,51 @@
+#!/usr/bin/expect -f
+# Auto-login to VPN using openconnect, pass, and Bitwarden CLI
+
+# Set timeout and credentials
+set timeout 30
+set vpn_host "vpn.usask.ca"
+
+# Fetch credentials from pass
+set env(BW_CLIENTID) [exec pass bw/client-id]
+set env(BW_CLIENTSECRET) [exec pass bw/client-secret]
+
+# Check if already logged in
+set login_status [exec bw login --check]
+if {[string match "*Not logged in*" $login_status]} {
+    puts "Logging in to Bitwarden..."
+    exec bw login --apikey
+} else {
+    puts "Already logged in to Bitwarden."
+}
+
+set env(BW_PASSWORD) [exec pass bw/master-password]
+
+# Unlock vault and capture session key
+set env(BW_SESSION) [exec bw unlock --passwordenv BW_PASSWORD --raw]
+
+# Retrieve username from pass
+set item_id [exec pass bw/usask-item-id]
+set username [exec bw get username $item_id]
+
+# Launch openconnect
+spawn sudo openconnect --protocol=anyconnect --user=$username \
+  --background \
+  $vpn_host
+
+
+# Handle expected prompts
+expect {
+    -re "Password:" {
+        set password [exec bw get password $item_id]
+        send "$password\r"
+        exp_continue
+    }
+    -re "Response:" {
+        set totp [exec bw get totp $item_id]
+        send "$totp\r"
+        exp_continue
+    }
+    eof
+}
+
+

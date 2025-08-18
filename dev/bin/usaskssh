@@ -1,0 +1,57 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+
+# Define hosts and users
+set hosts {
+    {"CMC" "ece-ko6"}
+    {"P6000" "ko-lab"}
+}
+
+# Check if CLI argument was given
+if {[llength $argv] == 1} {
+    set choice [lindex $argv 0]
+} else {
+    # Prompt user to choose host
+    puts "Select a host:"
+    set i 0
+    foreach host $hosts {
+        puts "$i) [lindex $host 0]"
+        incr i
+    }
+    puts -nonewline "Enter number: "
+    flush stdout
+    gets stdin choice
+}
+
+# Validate input
+if {![string is integer -strict $choice] || $choice < 0 || $choice >= [llength $hosts]} {
+    puts "Invalid selection."
+    exit 1
+}
+
+set username [exec pass usask/username]
+
+# Get selected user and host
+set selected [lindex $hosts $choice]
+set remote_host [lindex $selected 1]
+
+# Start SSH session
+spawn env TERM=xterm-256color ssh $username@$remote_host.usask.ca
+
+expect {
+    -re {Are you sure you want to continue connecting \(yes/no.*\)?} {
+        send "yes\r"
+        exp_continue
+    }
+    -re {(?i)password:} {
+        # set pw [exec security find-generic-password -s $service -a $account -w $keychain]
+        # send -- "$pw\r"
+        send -- [exec pass usask/password]
+        send -- "\r"
+    }
+}
+
+# Hand control to the user
+interact
+
