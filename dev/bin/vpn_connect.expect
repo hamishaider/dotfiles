@@ -9,14 +9,18 @@ set vpn_host "vpn.usask.ca"
 set env(BW_CLIENTID) [exec pass bw/client-id]
 set env(BW_CLIENTSECRET) [exec pass bw/client-secret]
 
-# Check if already logged in
-set login_status [exec bw login --check]
-if {[string match "*Not logged in*" $login_status]} {
+if {[catch {exec bw login --check} login_status]} {
     puts "Logging in to Bitwarden..."
-    exec bw login --apikey
+    if {[catch {exec bw login --apikey} result]} {
+        puts "Failed to log in: $result"
+        exit 1
+    } else {
+        puts "Successfully logged in."
+    }
 } else {
     puts "Already logged in to Bitwarden."
 }
+
 
 set env(BW_PASSWORD) [exec pass bw/master-password]
 
