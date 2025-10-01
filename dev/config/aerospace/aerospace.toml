@@ -127,6 +127,7 @@ automatically-unhide-macos-hidden-apps = false
     alt-7 = 'workspace 7'
     alt-8 = 'workspace 8'
     alt-9 = 'workspace 9'
+    alt-0 = 'workspace 0'
     alt-a = 'workspace A' # Chats 
     alt-b = 'workspace B' # Browser
     alt-c = 'workspace C' # Calender & Reminders 
@@ -147,6 +148,7 @@ automatically-unhide-macos-hidden-apps = false
     alt-shift-7 = 'move-node-to-workspace 7'
     alt-shift-8 = 'move-node-to-workspace 8'
     alt-shift-9 = 'move-node-to-workspace 9'
+    alt-shift-0 = 'move-node-to-workspace 0'
     alt-shift-a = 'move-node-to-workspace A'
     alt-shift-b = 'move-node-to-workspace B'
     alt-shift-c = 'move-node-to-workspace C'
@@ -211,7 +213,7 @@ run = "move-node-to-workspace C"
 
 [[on-window-detected]]
 if.app-id = "com.apple.reminders"
-run = "move-node-to-workspace C"
+run = "move-node-to-workspace R"
 
 [[on-window-detected]]
 if.app-id = "com.bitwarden.desktop"
@@ -219,4 +221,4 @@ run = "move-node-to-workspace P"
 
 [[on-window-detected]]
 if.app-id = "com.apple.Notes"
-run = "move-node-to-workspace 8"
+run = "move-node-to-workspace N"
