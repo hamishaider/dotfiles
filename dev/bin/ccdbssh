@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# === Configuration ===
+USERNAME="hamis"         # ← Replace with your CCDB username
+KEY_FILE="$HOME/.ssh/id_ccdb_mbp"        # ← Path to your SSH key
+
+# === CCDB hosts ===
+HOSTS=(
+    "narval.alliancecan.ca"     # 0
+    "fir.alliancecan.ca"     # 0
+    "nibi.alliancecan.ca"     # 0
+    "trillium.scinet.utoronto.ca"     # 0
+    "trillium-gpu.scinet.utoronto.ca"     # 0
+    "cedar.alliancecan.ca"         # 1
+    "graham.alliancecan.ca"        # 2
+)
+
+# === Get target index ===
+if [ -z "$1" ]; then
+    echo "Select a CCDB system:"
+    echo "  0: Narval"
+    echo "  1: Fir"
+    echo "  2: Nibi"
+    echo "  3: Trillium"
+    echo "  4: Trillium (GPU)"
+    echo "  5: Cedar"
+    echo "  6: Graham"
+    read -p "Enter a number: " choice
+else
+    choice="$1"
+fi
+
+# === Validate input ===
+if [[ "$choice" =~ ^[0-6]$ ]]; then
+    HOST="${HOSTS[$choice]}"
+    echo "Connecting to $HOST as $USERNAME..."
+    TERM=xterm-256color ssh -i "$KEY_FILE" "$USERNAME@$HOST"
+else
+    echo "Invalid selection. Must be 0 (Niagara), 1 (Cedar), or 2 (Graham)."
+    exit 1
+fi
+

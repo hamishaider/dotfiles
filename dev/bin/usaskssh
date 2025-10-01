@@ -30,7 +30,10 @@ if {![string is integer -strict $choice] || $choice < 0 || $choice >= [llength $
     exit 1
 }
 
-set username [exec pass usask/username]
+set username "lnz612"
+set service "usask-cas-password"
+set account "$env(USER)"
+set keychain "clitools.keychain"
 
 # Get selected user and host
 set selected [lindex $hosts $choice]
@@ -47,7 +50,7 @@ expect {
     -re {(?i)password:} {
         # set pw [exec security find-generic-password -s $service -a $account -w $keychain]
         # send -- "$pw\r"
-        send -- [exec pass usask/password]
+        send -- [exec security find-generic-password -s $service -a $account -w $keychain]
         send -- "\r"
     }
 }
