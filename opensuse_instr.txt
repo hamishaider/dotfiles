@@ -1,0 +1,3 @@
+nvim setup changes:
+- install pattern devel_basis
+- install pyenv (via a script)
