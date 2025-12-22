@@ -1,3 +1,7 @@
 nvim setup changes:
 - install pattern devel_basis
 - install pyenv (via a script)
+- install expect
+- install bw cli utility (native executable)
+- install npm, instamm nvm
+- install pass
