@@ -8,3 +8,8 @@ nvim setup changes:
 - install gnutls, gnutls-devel
 - install libxml2-devel
 - clone openconnect repo, install
+- do the following:
+    sudo zypper ar -cfp 90 https://download.opensuse.org/tumbleweed/repo/oss/ repo-oss
+    sudo zypper ar -cfp 95 https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
+    sudo zypper ar -cfp 99 https://download.opensuse.org/update/tumbleweed/ repo-update
+    sudo zypper refresh
