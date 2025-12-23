@@ -13,3 +13,4 @@ nvim setup changes:
     sudo zypper ar -cfp 95 https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
     sudo zypper ar -cfp 99 https://download.opensuse.org/update/tumbleweed/ repo-update
     sudo zypper refresh
+- install zsh and oh my zsh
