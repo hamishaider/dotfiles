@@ -5,3 +5,6 @@ nvim setup changes:
 - install bw cli utility (native executable)
 - install npm, instamm nvm
 - install pass
+- install gnutls, gnutls-devel
+- install libxml2-devel
+- clone openconnect repo, install
