@@ -28,11 +28,16 @@ set env(BW_PASSWORD) [exec pass bw/master-password]
 set env(BW_SESSION) [exec bw unlock --passwordenv BW_PASSWORD --raw]
 
 # Retrieve username from pass
+exec bw sync
 set item_id [exec pass bw/usask-item-id]
 set username [exec bw get username $item_id]
 
 # Launch openconnect
-spawn sudo /home/hamis/openconnect/openconnect --protocol=anyconnect --user=$username \
+# spawn sudo /home/hamis/openconnect/openconnect --protocol=anyconnect --user=$username \
+#   --background \
+#   $vpn_host
+
+spawn sudo /opt/openconnect/sbin/openconnect --protocol=anyconnect --user=$username \
   --background \
   $vpn_host
 
