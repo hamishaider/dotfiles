@@ -15,6 +15,7 @@ FROM opensuse/tumbleweed
 # ----- Versions / pins (edit here) -------------------------------------------
 # ARG NVIM_VERSION="v0.11.2"
 ARG NVM_VERSION="v0.40.3"
+ARG HOST_SSH_GID="67278"
 ARG PYTHON_VERSION="3.13"
 
 # ----- Locale / environment ---------------------------------------------------
@@ -28,7 +29,7 @@ ENV LANG="en_US.UTF-8" \
 RUN zypper -n refresh && \
     zypper -n install --no-recommends \
       # basics
-      sudo zsh git wget findutils gawk \
+      sudo zsh git wget findutils gawk terminfo ncurses-utils \
       # SSH client tools
       openssh-clients \
       # terminal QoL
@@ -36,7 +37,7 @@ RUN zypper -n refresh && \
       # archives
       zip unzip \
       # networking / VPN
-      iproute2 openconnect \
+      iproute2 \
       # neovim
       neovim \
       # build toolchain (for pyenv builds)
@@ -47,6 +48,7 @@ RUN zypper -n refresh && \
       libxml2-devel \
       # convenience
       which hostname && \
+    zypper in -t pattern devel_basis --no-recommends -y && \
     zypper -n clean --all
 
 
@@ -69,6 +71,8 @@ RUN (zypper -n install --no-recommends vpnc-scripts || true) && \
 RUN useradd -m -s /usr/bin/zsh hamis && \
     echo "hamis ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/hamis && \
     chmod 0440 /etc/sudoers.d/hamis
+RUN groupadd -g ${HOST_SSH_GID} hostssh 2>/dev/null || true && \
+    usermod -aG ${HOST_SSH_GID} hamis
 
 USER hamis
 ENV HOME=/home/hamis
@@ -129,9 +133,6 @@ RUN curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/inst
     . "$NVM_DIR/nvm.sh" && \
     nvm install --lts && \
     npm install -g @bitwarden/cli
-
-
-
 
 CMD ["zsh"]
 
