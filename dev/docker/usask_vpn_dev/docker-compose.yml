@@ -1,0 +1,33 @@
+services:
+  dev-docker:
+    platform: linux/arm64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dev-docker
+    tty: true
+    stdin_open: true
+
+    # matches: --cap-add=NET_ADMIN
+    cap_add:
+      - NET_ADMIN
+
+    # matches: --device /dev/net/tun
+    devices:
+      - /dev/net/tun:/dev/net/tun
+
+    # matches: -v "$HOME/MyProjects":/home/hamis/repos
+    volumes:
+      - ${HOME}/MyProjects:/home/hamis/repos
+
+      # OPTIONAL (recommended): forward your macOS Bitwarden SSH agent into the container
+      # Requires SSH_AUTH_SOCK to be set on macOS (you already did this in ~/.zshrc)
+      - ${SSH_AUTH_SOCK}:/ssh-agent
+
+    environment:
+      # OPTIONAL: makes SSH use the mounted agent socket inside the container
+      SSH_AUTH_SOCK: /ssh-agent
+
+    # same behavior as your CMD ["zsh"], but explicit here
+    command: zsh
+
