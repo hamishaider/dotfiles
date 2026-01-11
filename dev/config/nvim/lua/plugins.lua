@@ -16,8 +16,6 @@ return {
   { 'catppuccin/nvim', name = 'catppuccin' },
   { 'rose-pine/neovim', name = 'rose-pine' },
 
-  -- Treesitter playground
-  'nvim-treesitter/playground',
 
   -- Harpoon (quick navigation)
   'theprimeagen/harpoon',
@@ -92,3 +90,4 @@ return {
     },
   },
 }
+
