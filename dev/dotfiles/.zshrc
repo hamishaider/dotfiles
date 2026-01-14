@@ -95,11 +95,11 @@ bindkey '^]' history-substring-search-up
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch $(uname -m)"
@@ -111,6 +111,7 @@ bindkey '^]' history-substring-search-up
 # - $ZSH_CUSTOM/aliases.zsh
 # - $ZSH_CUSTOM/macos.zsh
 # For a full list of active aliases, run `alias`.
+
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
@@ -134,6 +135,7 @@ eval "$(pyenv init -)"
 
 export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
 
+export SSH_AUTH_SOCK=/Users/hamishaider/.bitwarden-ssh-agent.sock
 
 # BEGIN opam configuration
 # This is useful if you're using opam as it adds:
@@ -142,3 +144,5 @@ export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
 # This section can be safely removed at any time if needed.
 [[ ! -r '/Users/hamishaider/.opam/opam-init/init.zsh' ]] || source '/Users/hamishaider/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
 # END opam configuration
+
+export PATH="$PATH:/Users/hamishaider/Binaries"
