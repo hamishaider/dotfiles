@@ -7,6 +7,7 @@ services:
       #   HOST_SSH_GID: "67278"
       dockerfile: Dockerfile
     container_name: dev-docker
+    hostname: dev-docker
     tty: true
     stdin_open: true
 

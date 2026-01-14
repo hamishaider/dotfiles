@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# uni-dev (openSUSE Tumbleweed)
+# dev-docker (openSUSE Tumbleweed)
 #
 # Goals:
 # - Non-root dev user (hamis) with passwordless sudo
