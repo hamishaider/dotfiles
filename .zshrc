@@ -137,6 +137,8 @@ eval "$(pyenv init -)"
 export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 
+# export TMUX_TMPDIR="$HOME/.tmux"
+
 
 # BEGIN opam configuration
 # This is useful if you're using opam as it adds:
