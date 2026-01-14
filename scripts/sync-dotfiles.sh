@@ -1,22 +1,49 @@
 #!/usr/bin/env bash
 
-set -e
-set -u
+set -euo pipefail
 
-# Get absolute path to repo root (where this script lives)
+# Absolute path to this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$SCRIPT_DIR/dev/config"
-TARGET_DIR="$HOME/.config"
 
-# Dry-run option
+# Repo root is parent of scripts/
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Source directories in repo
+CONFIG_SRC="$REPO_ROOT/dev/config"
+DOTFILES_SRC="$REPO_ROOT/dev/dotfiles"
+BIN_SRC="$REPO_ROOT/dev/bin"
+
+# Destination directories
+CONFIG_DST="$HOME/.config"
+DOTFILES_DST="$HOME"
+BIN_DST="$HOME/.local/bin"
+
+# Rsync flags
+RSYNC_FLAGS=(-avh --progress)
+
+# Dry-run support
 if [[ "${1:-}" == "--dry-run" ]]; then
-    echo "🧪 Dry run: syncing $REPO_DIR → $TARGET_DIR"
-    rsync -avh --dry-run --progress "$REPO_DIR/" "$TARGET_DIR/"
-    exit 0
+    echo "Dry run enabled"
+    RSYNC_FLAGS+=(--dry-run)
 fi
 
-# Sync operation
-echo "syncing $REPO_DIR to $TARGET_DIR..."
-rsync -avh --progress "$REPO_DIR/" "$TARGET_DIR/"
+echo "Syncing ~/.config"
+rsync "${RSYNC_FLAGS[@]}" --delete "$CONFIG_SRC/" "$CONFIG_DST/"
 
-echo "Dotfiles synced to ~/.config"
+echo "Syncing home dotfiles"
+rsync "${RSYNC_FLAGS[@]}" \
+    "$DOTFILES_SRC/.zshrc" \
+    "$DOTFILES_SRC/.p10k.zsh" \
+    "$DOTFILES_DST/"
+
+echo "Syncing ~/.local/bin"
+mkdir -p "$BIN_DST"
+rsync "${RSYNC_FLAGS[@]}" "$BIN_SRC/" "$BIN_DST/"
+
+echo "Dotfiles and binaries synced"
+
+chmod -R u+x "$BIN_DST"
+
+echo "Binaries made executable"
+
+
