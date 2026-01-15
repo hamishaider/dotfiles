@@ -18,6 +18,17 @@ CONFIG_DST="$HOME/.config"
 DOTFILES_DST="$HOME"
 BIN_DST="$HOME/.local/bin"
 
+# Config folders to sync WITH delete (allowlist)
+CONFIG_FOLDERS=(
+    nvim
+    alacritty
+    hypr
+    tmux
+    ghostty
+    rofi
+    waybar
+)
+
 # Rsync flags
 RSYNC_FLAGS=(-avh --progress)
 
@@ -27,8 +38,22 @@ if [[ "${1:-}" == "--dry-run" ]]; then
     RSYNC_FLAGS+=(--dry-run)
 fi
 
-echo "Syncing ~/.config"
-rsync "${RSYNC_FLAGS[@]}" "$CONFIG_SRC/" "$CONFIG_DST/"
+echo "Syncing ~/.config (restricted folders only)"
+
+for folder in "${CONFIG_FOLDERS[@]}"; do
+    SRC="$CONFIG_SRC/$folder"
+    DST="$CONFIG_DST/$folder"
+
+    if [[ ! -d "$SRC" ]]; then
+        echo "Warning: $SRC does not exist, skipping"
+        continue
+    fi
+
+    mkdir -p "$DST"
+
+    echo "→ Syncing $folder with --delete"
+    rsync "${RSYNC_FLAGS[@]}" --delete "$SRC/" "$DST/"
+done
 
 echo "Syncing home dotfiles"
 rsync "${RSYNC_FLAGS[@]}" \
@@ -43,7 +68,5 @@ rsync "${RSYNC_FLAGS[@]}" "$BIN_SRC/" "$BIN_DST/"
 echo "Dotfiles and binaries synced"
 
 chmod -R u+x "$BIN_DST"
-
 echo "Binaries made executable"
-
 
