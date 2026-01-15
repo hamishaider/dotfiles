@@ -1,0 +1,6 @@
+font:
+  size: 14.0 # Set your desired font size here
+  normal:
+    family: monospace
+    style: Regular
+
