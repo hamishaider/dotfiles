@@ -4,3 +4,7 @@ size = 14.0
 [font.normal]
 family = "monospace"
 style = "Regular"
+
+[window]
+opacity = 0.55
+padding = { x = 10, y = 10 }
