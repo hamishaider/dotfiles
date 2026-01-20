@@ -135,7 +135,7 @@ eval "$(pyenv init -)"
 
 export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
 
-export SSH_AUTH_SOCK=/Users/hamishaider/.bitwarden-ssh-agent.sock
+# export SSH_AUTH_SOCK=/Users/hamishaider/.bitwarden-ssh-agent.sock
 
 # BEGIN opam configuration
 # This is useful if you're using opam as it adds:
