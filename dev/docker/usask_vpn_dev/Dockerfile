@@ -26,31 +26,39 @@ ENV LANG="en_US.UTF-8" \
 # Notes:
 # - --no-recommends keeps the image smaller.
 # - openSUSE uses zypper (not apt). After install, clean metadata.
-RUN zypper -n refresh && \
-    zypper -n install --no-recommends \
+# Ensure zypper is fully non-interactive and auto-imports GPG keys
+RUN zypper --non-interactive refresh && \
+    zypper --non-interactive install --no-confirm \
       # basics
       sudo zsh git wget findutils gawk terminfo ncurses-utils \
       # SSH client tools
       openssh-clients \
       # terminal QoL
-      ripgrep fd fzf tmux less man \
+      ripgrep fd fzf rsync tmux less man \
       # archives
       zip unzip \
       # networking / VPN
       iproute2 \
       # neovim
-      neovim \
+      neovim ctags \
       # build toolchain (for pyenv builds)
       make gcc gcc-c++ \
-      # Python build deps (openSUSE/Tumbleweed names)
+      # autogen
+      autoconf automake libtool \
+      gettext-tools \
+      gnutls-devel \
+      # Python build deps
       libopenssl-devel zlib-devel libbz2-devel readline-devel sqlite3-devel \
       libffi-devel xz-devel tk-devel \
       libxml2-devel \
+      # expect script
+      password-store expect \
       # convenience
       which hostname && \
-    zypper in -t pattern devel_basis --no-recommends -y && \
-    zypper -n clean --all
-
+    # Install patterns using non-interactive flags
+    zypper --non-interactive install --type pattern devel_basis && \
+    # Clean up to reduce image size
+    zypper clean --all
 
 # ----- openconnect helper script (vpnc-script) --------------------------------
 # openconnect expects an external helper script usually called "vpnc-script". :contentReference[oaicite:3]{index=3}

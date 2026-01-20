@@ -26,13 +26,13 @@ services:
       # OPTIONAL (recommended): forward your macOS Bitwarden SSH agent into the container
       # Requires SSH_AUTH_SOCK to be set on macOS (you already did this in ~/.zshrc)
       # - ${SSH_AUTH_SOCK}:/agent.sock
-      # - /run/host-services/ssh-auth.sock:/agent.sock
+      - /run/host-services/ssh-auth.sock:/agent.sock
       # - /Users/hamishaider/.bitwarden-ssh-agent.sock:/agent.sock
 
 
-    # environment:
-      # OPTIONAL: makes SSH use the mounted agent socket inside the container
-      # SSH_AUTH_SOCK: /agent.sock
+    environment:
+      OPTIONAL: makes SSH use the mounted agent socket inside the container
+      SSH_AUTH_SOCK: /agent.sock
       # SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
 
     # same behavior as your CMD ["zsh"], but explicit here
