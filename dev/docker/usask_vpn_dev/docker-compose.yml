@@ -22,6 +22,15 @@ services:
     # matches: -v "$HOME/MyProjects":/home/hamis/repos
     volumes:
       - ${HOME}/MyProjects:/home/hamis/repos
+      - ${HOME}/.password-store:/home/hamis/.password-store
+
+      # 2. Mount the Public Key (read-only)
+      # - ./gpg-mac-public-key.asc:/tmp/public-key.asc:ro
+      
+      # 3. The Magic: Mount Host's EXTRA socket -> Container's STANDARD socket
+      # Replace 'youruser' with your actual mac username
+      - /Users/hamishaider/.gnupg:/home/hamis/.gnupg_mac:ro
+
 
       # OPTIONAL (recommended): forward your macOS Bitwarden SSH agent into the container
       # Requires SSH_AUTH_SOCK to be set on macOS (you already did this in ~/.zshrc)
@@ -31,8 +40,11 @@ services:
 
 
     environment:
-      OPTIONAL: makes SSH use the mounted agent socket inside the container
+      # OPTIONAL: makes SSH use the mounted agent socket inside the container
       SSH_AUTH_SOCK: /agent.sock
+      GNUPGHOME: /home/hamis/.gnupg
+      GPG_TTY: /dev/tty
+      # GPG_AGENT_INFO: /home/user/.gnupg/S.gpg-agent:0:1
       # SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
 
     # same behavior as your CMD ["zsh"], but explicit here
