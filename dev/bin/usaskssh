@@ -31,7 +31,31 @@ if {![string is integer -strict $choice] || $choice < 0 || $choice >= [llength $
     exit 1
 }
 
-set username [exec pass usask/username]
+# Fetch credentials from pass
+set env(BW_CLIENTID) [exec pass bw/client-id]
+set env(BW_CLIENTSECRET) [exec pass bw/client-secret]
+
+if {[catch {exec bw login --check} login_status]} {
+    puts "Logging in to Bitwarden..."
+    if {[catch {exec bw login --apikey} result]} {
+        puts "Failed to log in: $result"
+        exit 1
+    } else {
+        puts "Successfully logged in."
+    }
+} else {
+    puts "Already logged in to Bitwarden."
+}
+
+
+set env(BW_PASSWORD) [exec pass bw/master-password]
+
+# Unlock vault and capture session key
+set env(BW_SESSION) [exec bw unlock --passwordenv BW_PASSWORD --raw]
+
+# Retrieve username from pass
+set item_id [exec pass bw/usask-item-id]
+set username [exec bw get username $item_id]
 
 # Get selected user and host
 set selected [lindex $hosts $choice]
@@ -48,8 +72,8 @@ expect {
     -re {(?i)password:} {
         # set pw [exec security find-generic-password -s $service -a $account -w $keychain]
         # send -- "$pw\r"
-        send -- [exec pass usask/password]
-        send -- "\r"
+        set password [exec bw get password $item_id]
+        send "$password\r"
     }
 }
 

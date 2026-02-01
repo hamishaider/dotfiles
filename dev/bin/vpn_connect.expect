@@ -32,7 +32,7 @@ set item_id [exec pass bw/usask-item-id]
 set username [exec bw get username $item_id]
 
 # Launch openconnect
-spawn sudo /home/hamis/openconnect/openconnect --protocol=anyconnect --user=$username \
+spawn sudo /home/hamis/.local/bin/openconnect --protocol=anyconnect --user=$username \
   --background \
   $vpn_host
 
