@@ -96,7 +96,6 @@ RUN (zypper -n install --no-recommends vpnc-scripts || true) && \
       chmod +x /usr/local/sbin/vpnc-script; \
     fi
 
-
 # ----- Create non-root user ---------------------------------------------------
 # Create the group if it doesn't exist, then the user
 # Note: --non-unique / -o allows using a UID/GID that might already exist in the base image
@@ -112,6 +111,12 @@ RUN useradd -m -s /usr/bin/zsh hamis && \
 RUN groupadd -g ${HOST_SSH_GID} hostssh 2>/dev/null || true && \
     usermod -aG ${HOST_SSH_GID} hamis
 
+# ----- TMUX setup ---------------------------------------------------
+RUN uid="$(id -u hamis)" && gid="$(id -g hamis)" && \
+    mkdir -p /run/tmux && \
+    chown -R ${uid}:${gid} /run/tmux
+
+# ----- Switch to user ---------------------------------------------------
 USER hamis
 ENV HOME=/home/hamis
 WORKDIR /home/hamis
