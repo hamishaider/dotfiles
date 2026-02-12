@@ -36,4 +36,4 @@
 -- vim.keymap.set("n", "<S-Tab>", "<Cmd>BufferLineCyclePrev<CR>")
 
 vim.keymap.set("n", "<space>bn", "<Cmd>bn<CR>")
-vim.keymap.set("n", "<space>bp", "<Cmd>bp<CR>")
+vim.keymap.set("n", "<space>bh", "<Cmd>bp<CR>")

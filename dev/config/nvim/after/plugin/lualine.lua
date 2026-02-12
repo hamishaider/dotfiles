@@ -44,7 +44,23 @@ require('lualine').setup {
         lualine_a = {
             { 'mode', separator = { left = '' }, right_padding = 2 },
         },
-        lualine_b = { 'filename', 'branch' },
+        lualine_b = { {
+            'filename',
+            file_status = true, -- Displays file status (readonly, modified, etc.)
+            newfile_status = false,
+            path = 1,           -- 0: Just filename
+            -- 1: Relative path
+            -- 2: Absolute path
+            -- 3: Absolute path, with tilde as the home directory
+
+            shorting_target = 40, -- Shortens path if it gets too long
+            symbols = {
+                modified = '[+]',
+                readonly = '[-]',
+                unnamed = '[No Name]',
+                newfile = '[New]',
+            }
+        }, 'branch' },
         lualine_c = {},
         lualine_x = { 'diagnostics' }, -- Added diagnostics here
         lualine_y = { 'filetype', 'diff', 'progress' },
